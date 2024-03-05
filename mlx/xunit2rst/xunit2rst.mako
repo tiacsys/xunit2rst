@@ -86,7 +86,7 @@ if add_links:
         suite_names.add(suite_name)
 test_idx += 1
 %>\
-${generate_item(test.attrib['name'], relationship, failure_message, [test], (len(suite_names), test_idx), extra_content_map)}\
+${generate_item(test, relationship, failure_message, (len(suite_names), test_idx), extra_content_map)}\
         % endfor
     % else:  # create traceable item per testsuite element
 <%
@@ -109,7 +109,7 @@ else:
         test_result = 'Skip'
         relationship = 'skipped'
 %>\
-${generate_item(suite.attrib['name'], relationship, failure_message, suite, (0, suite_idx + 1), extra_content_map)}\
+${generate_item(suite, relationship, failure_message, (0, suite_idx + 1), extra_content_map)}\
     % endif
 % endfor
 Traceability Matrix
@@ -127,9 +127,10 @@ The below table traces the test report to test cases.
     :group: top
     :nocaptions:
 \
-<%def name="generate_item(element_name, relationship, failure_msg, tests, indexes, extra_content_map)">\
+<%def name="generate_item(suite, relationship, failure_msg, indexes, extra_content_map)">\
 <%
-test_name_no_prefix = _convert_name(element_name)
+
+test_name_no_prefix = _convert_name(suite.attrib['name'])
 extra_content = extra_content_map.get(test_name_no_prefix, "")
 if test_name_no_prefix.startswith(prefix):
     test_name = test_name_no_prefix
@@ -146,7 +147,7 @@ else:
 
 <% prepend_literal_block = True %>
 % if failure_msg and relationship != 'passes':
-    % for test in tests:
+    % for test in suite:
         % for failure in test.findall('failure') + test.findall('skipped'):
             % if prepend_literal_block:
     ::
