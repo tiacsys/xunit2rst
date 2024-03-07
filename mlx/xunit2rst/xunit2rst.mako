@@ -63,8 +63,13 @@ test_idx = 0
 <%
 extra_content_map = indexed_extra_content_map.get(suite_idx, {})
 extra_content_map = {_convert_name(key): value for key, value in extra_content_map.items()}
+suite_name = suite.attrib.get('name')
 %>\
     % if not itemize_suites:  # create traceable item per testcase element
+${suite_name}
+${"-" * (len(suite_name))}
+${suite.attrib.get('tests')} Tests ran at ${suite.attrib.get('timestamp')} (${suite.attrib.get('time')} s)
+
         % for test in suite:
 <%
 if len(test):
@@ -111,6 +116,7 @@ else:
 %>\
 ${generate_item(suite, relationship, failure_message, (0, suite_idx + 1), extra_content_map)}\
     % endif
+    
 % endfor
 Traceability Matrix
 ===================
@@ -127,10 +133,10 @@ The below table traces the test report to test cases.
     :group: top
     :nocaptions:
 \
-<%def name="generate_item(suite, relationship, failure_msg, indexes, extra_content_map)">\
+<%def name="generate_item(test, relationship, failure_msg, indexes, extra_content_map)">\
 <%
 
-test_name_no_prefix = _convert_name(suite.attrib['name'])
+test_name_no_prefix = _convert_name(test.attrib['name'])
 extra_content = extra_content_map.get(test_name_no_prefix, "")
 if test_name_no_prefix.startswith(prefix):
     test_name = test_name_no_prefix
@@ -144,6 +150,7 @@ else:
 % endif
 
     Test result: :xunit2rst-${test_result.lower()}:`${test_result}`
+    Duration: ${test.attrib['time']} s
 
 <% prepend_literal_block = True %>
 % if failure_msg and relationship != 'validates':
