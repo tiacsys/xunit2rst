@@ -35,6 +35,7 @@ setup(
         'Topic :: Documentation :: Sphinx',
         'Topic :: Utilities',
     ],
+    namespace_packages=['mlx'],
     platforms='any',
     packages=find_namespace_packages(where='.'),
     package_dir={"": "."},
