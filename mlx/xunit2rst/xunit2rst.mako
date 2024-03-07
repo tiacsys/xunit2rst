@@ -76,7 +76,7 @@ if len(test):
         relationship = 'fails'
 else:
     test_result = 'Pass'
-    relationship = 'passes'
+    relationship = 'validates'
 if add_links:
     class_name = test.attrib.get('classname', '')
     if class_name.startswith(f"{suite.attrib.get('name')}."):
@@ -91,7 +91,7 @@ ${generate_item(test, relationship, failure_message, (len(suite_names), test_idx
     % else:  # create traceable item per testsuite element
 <%
 test_result = 'Pass'
-relationship = 'passes'
+relationship = 'validates'
 # skip testsuite elements that have no testcase element (typically the first testsuite element only)
 if not len(suite):
     continue
@@ -146,16 +146,14 @@ else:
     Test result: :xunit2rst-${test_result.lower()}:`${test_result}`
 
 <% prepend_literal_block = True %>
-% if failure_msg and relationship != 'passes':
-    % for test in suite:
-        % for failure in test.findall('failure') + test.findall('skipped'):
-            % if prepend_literal_block:
+% if failure_msg and relationship != 'validates':
+    % for failure in test.findall('failure') + test.findall('skipped'):
+        % if prepend_literal_block:
     ::
 <% prepend_literal_block = False %>
             % endif
 ${generate_body(failure.get('message'), ' ' * 6, error_type=failure.get('type'))}
 
-        % endfor
     % endfor
 % endif
 % if extra_content:
