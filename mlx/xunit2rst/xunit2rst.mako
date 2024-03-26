@@ -118,6 +118,7 @@ ${generate_item(suite, relationship, failure_message, (0, suite_idx + 1), extra_
     % endif
     
 % endfor
+% if gen_matrix:
 Traceability Matrix
 ===================
 
@@ -133,6 +134,7 @@ The below table traces the test report to test cases.
     :group: top
     :nocaptions:
 \
+% endif
 <%def name="generate_item(test, relationship, failure_msg, indexes, extra_content_map)">\
 <%
 

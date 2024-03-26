@@ -45,8 +45,8 @@ def render_template(destination, only="", **kwargs):
         rst_file.write(rst_content)
 
 
-def generate_xunit_to_rst(input_file, rst_file, itemize_suites, failure_message, log_file, add_links, *prefix_args,
-                          **kwargs):
+def generate_xunit_to_rst(input_file, rst_file, itemize_suites, failure_message, log_file, add_links,
+                          disable_traceability_matrix, *prefix_args, **kwargs):
     """ Processes input arguments, calls mako template function while passing all needed parameters.
 
     Args:
@@ -75,6 +75,8 @@ def generate_xunit_to_rst(input_file, rst_file, itemize_suites, failure_message,
                              for name, content in yaml.load(file).items()}
         indexed_extra_content_map[i] = extra_content_map
 
+    gen_matrix = not disable_traceability_matrix
+
     render_template(
         rst_file,
         test_suites=test_suites,
@@ -85,6 +87,7 @@ def generate_xunit_to_rst(input_file, rst_file, itemize_suites, failure_message,
         failure_message=failure_message,
         log_file=log_file,
         add_links=add_links,
+        gen_matrix=gen_matrix,
         indexed_extra_content_map=indexed_extra_content_map,
         **kwargs,
     )
@@ -270,6 +273,8 @@ def create_parser():
     arg_parser.add_argument("--links", action="store_true",
                             help="Optional: inserts a link to the RobotFramework HTML log file for each test case "
                                  "as ext_robotframeworklog link id.")
+    arg_parser.add_argument("--disable-traceability-matrix", action='store_true',
+                            help="Force to not generate a traceability matrix for requirements.")
     arg_parser.add_argument('-v', '--version',
                             action='version',
                             version='%(prog)s {}'.format(version))
@@ -290,6 +295,7 @@ def main():
         args.failure_message,
         args.log,
         args.links,
+        args.disable_traceability_matrix,
         args.prefix,
         args.trim_suffix,
         args.type,
